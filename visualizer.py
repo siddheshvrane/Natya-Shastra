@@ -140,6 +140,8 @@ class Visualizer:
         
         return image
 
+        return image
+    
     def draw_fibonacci_flows(self, image):
         """Draws connections between limbs using golden-ratio curves."""
         # Key aesthetic: Everything flows from the Center (Torso) outwards, 
@@ -159,23 +161,57 @@ class Visualizer:
             28, # R Ankle
             0,  # Nose
         ]
+
+        # Elbows and Knees - important for dance dynamics
+        intermediate_joints = [
+            13, # L Elbow
+            14, # R Elbow
+            25, # L Knee
+            26, # R Knee
+        ]
         
-        font = cv2.FONT_HERSHEY_SIMPLEX
+        # Bounding boxes for Elbows/Knees (Small, focused)
+        self.draw_bounding_box(image, [13], label_prefix="L-Elbow")
+        self.draw_bounding_box(image, [14], label_prefix="R-Elbow")
+        self.draw_bounding_box(image, [25], label_prefix="L-Knee")
+        self.draw_bounding_box(image, [26], label_prefix="R-Knee")
+
+        # 1. Torso -> Elbow -> Wrist (Arm Flow)
+        # We need "Joint Flow". 
+        # L Shoulder(11) -> L Elbow(13) -> L Wrist(15)
+        self.draw_parabola_curve(image, self.get_pt(11), self.get_pt(13), white, 1, dashed=True)
+        self.draw_parabola_curve(image, self.get_pt(13), self.get_pt(15), white, 1, dashed=True)
         
+        # R Shoulder(12) -> R Elbow(14) -> R Wrist(16)
+        self.draw_parabola_curve(image, self.get_pt(12), self.get_pt(14), white, 1, dashed=True)
+        self.draw_parabola_curve(image, self.get_pt(14), self.get_pt(16), white, 1, dashed=True)
+        
+        # 2. Hip -> Knee -> Ankle (Leg Flow)
+        # L Hip(23) -> L Knee(25) -> L Ankle(27)
+        self.draw_parabola_curve(image, self.get_pt(23), self.get_pt(25), white, 1, dashed=True)
+        self.draw_parabola_curve(image, self.get_pt(25), self.get_pt(27), white, 1, dashed=True)
+        
+        # R Hip(24) -> R Knee(26) -> R Ankle(28)
+        self.draw_parabola_curve(image, self.get_pt(24), self.get_pt(26), white, 1, dashed=True)
+        self.draw_parabola_curve(image, self.get_pt(26), self.get_pt(28), white, 1, dashed=True)
+
+        
+        # Radiating abstract curves (Center to Extremities) - kept for "Sci-Fi" look
         for idx in extremities:
             p_ext = self.get_pt(idx)
-            
             # Draw Golden Curve
             self.draw_parabola_curve(image, p_center, p_ext, white, 1, dashed=True)
             
-            # Add small phi symbol or calculation at midpoint of curve? 
-            # Too much clutter maybe.
         
         # Inter-limb connections (The "Web")
         # Hand to Hand
         self.draw_parabola_curve(image, self.get_pt(15), self.get_pt(16), (255, 255, 255), 1, dashed=True)
         # Foot to Foot
         self.draw_parabola_curve(image, self.get_pt(27), self.get_pt(28), (255, 255, 255), 1, dashed=True)
+        
+        # New: Elbow to Elbow / Knee to Knee (Structure)
+        self.draw_parabola_curve(image, self.get_pt(13), self.get_pt(14), (200, 200, 255), 1, dashed=True)
+        self.draw_parabola_curve(image, self.get_pt(25), self.get_pt(26), (200, 200, 255), 1, dashed=True)
         
         # Cross Connect (Hand to Opposite Foot) - Very Vitruvian Man
         self.draw_parabola_curve(image, self.get_pt(15), self.get_pt(28), (255, 255, 200), 1, dashed=True)
