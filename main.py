@@ -93,6 +93,39 @@ def main(video_path=None):
         out.release()
         cv2.destroyAllWindows()
 
+    # Audio Merging Step
+    if video_path:
+        print("Merging audio from original video...")
+        try:
+            from moviepy import VideoFileClip
+            
+            original_clip = VideoFileClip(video_path)
+            if original_clip.audio:
+                processed_clip = VideoFileClip("output.mp4")
+                final_clip = processed_clip.with_audio(original_clip.audio)
+                
+                # Write to a padded file to avoid conflicts
+                final_output = "output_audio.mp4"
+                final_clip.write_videofile(final_output, codec='libx264', audio_codec='aac', logger=None)
+                
+                original_clip.close()
+                processed_clip.close()
+                
+                # Rename to overwrite output.mp4 if desired, or keep as output_audio.mp4
+                # User asked for "output video", let's replace output.mp4
+                import os
+                if os.path.exists("output.mp4"):
+                    os.remove("output.mp4")
+                os.rename(final_output, "output.mp4")
+                print("Audio merged successfully. Saved to output.mp4")
+            else:
+                print("Original video has no audio.")
+                original_clip.close()
+        except ImportError:
+            print("Warning: 'moviepy' not installed. Audio not preserved. Run 'pip install moviepy'")
+        except Exception as e:
+            print(f"Warning: Failed to merge audio: {e}")
+
 if __name__ == "__main__":
     # You can pass a video path as an argument
     video_file = sys.argv[1] if len(sys.argv) > 1 else None
