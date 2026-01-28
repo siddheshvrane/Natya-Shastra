@@ -27,8 +27,8 @@ class Visualizer:
         # 1. Draw Bounding Boxes (The "Analytic" Layer)
         image = self.draw_all_bounding_boxes(image)
 
-        # 2. Draw Fibonacci/Parabolic Flows (The "Organic" Layer)
-        image = self.draw_fibonacci_flows(image)
+        # 2. Draw Pingala/Parabolic Flows (The "Organic" Layer)
+        image = self.draw_pingala_flows(image)
         
         return image
 
@@ -88,7 +88,7 @@ class Visualizer:
         return image
 
     def draw_parabola_curve(self, image, p1, p2, color=(255, 255, 255), thickness=1, dashed=True):
-        """Draws a 'Fibonacci style' parabolic curve between p1 and p2."""
+        """Draws a 'Pingala style' parabolic curve between p1 and p2."""
         dist = math.hypot(p2[0]-p1[0], p2[1]-p1[1])
         if dist == 0: return image
 
@@ -142,7 +142,7 @@ class Visualizer:
 
         return image
     
-    def draw_fibonacci_flows(self, image):
+    def draw_pingala_flows(self, image):
         """Draws connections between limbs using golden-ratio curves."""
         # Key aesthetic: Everything flows from the Center (Torso) outwards, 
         # or abstract relationships between extremities.
